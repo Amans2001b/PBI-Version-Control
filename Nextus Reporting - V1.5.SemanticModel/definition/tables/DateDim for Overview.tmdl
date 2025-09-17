@@ -1,0 +1,51 @@
+table 'DateDim for Overview'
+	lineageTag: cf076b68-5f52-45ad-8a7e-87202d5575a9
+
+	column Date
+		formatString: mm/dd/yyyy
+		lineageTag: 37147061-6118-4d81-b4b7-d5c6c75a0046
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 029ba412-d7df-4f43-afa3-44d4269d602a
+			defaultHierarchy: LocalDateTable_d12d425f-62e7-46e5-9e29-fc2f0e979cca.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column CurrentMonthFlag = ```
+			
+			  IF(
+			    YEAR('DateDim for Overview'[Date]) = YEAR(TODAY()) &&
+			    MONTH('DateDim for Overview'[Date]) = MONTH(TODAY()),
+			    "Current Month",
+			    "Other Months"
+			  )
+			
+			```
+		lineageTag: 0886ff0d-3cac-4a63-85b3-6a7c41a913a4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'DateDim for Overview' = calculated
+		mode: import
+		source = ```
+				
+				VAR Min_Paymnt_Dt = MIN( paymentdetailwithallowed[Payment_Received] )
+				VAR Min_Chrg_Dt = MIN( 'reporting vw_AllChargesReport'[charge_entered_date] )
+				VAR Max_Paymnt_Dt = MAX( paymentdetailwithallowed[Payment_Received])
+				VAR Max_Chrg_Dt= MAX( 'reporting vw_AllChargesReport'[charge_entered_date]  )
+				VAR Earliest_ = MIN( Min_Paymnt_Dt , Min_Chrg_Dt )
+				VAR Latest   = MAX( Max_Paymnt_Dt, Max_Chrg_Dt )
+				RETURN
+				  CALENDAR( Earliest_, Latest )
+				
+				```
+
+	annotation PBI_Id = ffc7a533f18d44a692b34725197f7117
+

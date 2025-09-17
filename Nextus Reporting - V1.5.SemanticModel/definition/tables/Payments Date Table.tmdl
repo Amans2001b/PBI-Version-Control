@@ -1,0 +1,95 @@
+table 'Payments Date Table'
+	lineageTag: f18ebed2-62ad-4afa-ace2-146a19ae3bc5
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: mm/dd/yyyy
+		lineageTag: 81aa4200-c041-4baa-b922-f784007bdf13
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year = YEAR('Payments Date Table'[Date])
+		formatString: 0
+		lineageTag: 8f90dc81-bbff-4dd7-b70a-2cf0672142ec
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month No.' = MONTH('Payments Date Table'[Date])
+		formatString: 0
+		lineageTag: 402a4b15-9398-4ec6-9b41-29f8c76e80dd
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month = FORMAT('Payments Date Table'[Date],"mmm")
+		lineageTag: faab4692-7f6f-472c-b3f2-7c724c36511a
+		summarizeBy: none
+		sortByColumn: 'Month No.'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Today = TODAY()
+		formatString: mm/dd/yyyy
+		lineageTag: 3de32f67-2d6f-4a3b-82a4-d60f92f79d37
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column YTD_Filter =
+			IF(
+			    YEAR('Payments Date Table'[Date]) = YEAR('Payments Date Table'[Today]) && 'Payments Date Table'[Date] <= 'Payments Date Table'[Today],
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 664726eb-898c-4993-9e70-956353ec5da2
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearFlag = ```
+			
+			IF(
+			    'Payments Date Table'[Year] = YEAR(TODAY()),
+			    "Current Year",
+			    FORMAT('Payments Date Table'[Year], "0")
+			)
+			
+			```
+		lineageTag: ed1a81c8-ed61-4bda-8463-7a26721edf03
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: e873f9d6-c5f5-4720-bb1d-b5a0db76f86a
+
+		level Date
+			lineageTag: d355ea98-a0d3-4222-a7ed-a75864c6d050
+			column: Date
+
+		level Month
+			lineageTag: 02b5ebbc-3c18-4b51-94de-71fe76736984
+			column: Month
+
+		level Year
+			lineageTag: 1c39567b-ee66-4aea-9f23-f3e19a614dca
+			column: Year
+
+	partition 'Payments Date Table' = calculated
+		mode: import
+		source = CALENDAR(MIN('paymentdetailwithallowed'[Payment_Received]),TODAY())
+
+	annotation PBI_Id = 1bf2f10ab1c64f93952ddcecc627929a
+

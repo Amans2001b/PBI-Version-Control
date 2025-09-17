@@ -1,0 +1,29 @@
+table 'Payers Dim( Payments)'
+	lineageTag: 2de65b4c-7101-479b-b679-def8a6677eac
+
+	column PayerGroup
+		lineageTag: 4ea7de57-ff94-4c7b-8d20-780cdeb5f933
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PayerGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Payers Dim( Payments)' = calculated
+		mode: import
+		source = ```
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'paymentdetailwithallowed',
+				      "PayerGroup", 'paymentdetailwithallowed'[Payment_Source_w_Payer]
+				    )
+				  ),
+				  ROW("PayerGroup","Others")
+				)
+				
+				```
+
+	annotation PBI_Id = 1b3f54c1053c4c1aad7eaa464bfd297d
+

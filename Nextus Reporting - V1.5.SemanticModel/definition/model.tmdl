@@ -1,0 +1,64 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+/// Errors in queries that were loaded on 4/29/2025 5:26:47 AM.
+queryGroup 'Query Errors - 4/29/2025 5:26:47 AM'
+
+	annotation PBI_QueryGroupOrder = 0
+
+/// Errors in queries that were loaded on 5/4/2025 8:24:05 AM.
+queryGroup 'Query Errors - 5/4/2025 8:24:05 AM'
+
+	annotation PBI_QueryGroupOrder = 1
+
+annotation PBI_QueryOrder = ["Imp Measures","vw_power_bi_security","paymentdetailwithallowed","reporting vw_AllChargesReport","Auth Log","reporting vw_FacilityMasterWithDisplayName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.140.1454.0 (25.02)+e2197f0c4ba3450e119e1aea750568d97991832a
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'Payments Date Table'
+ref table 'Imp Measures'
+ref table DateTableTemplate_ca32303d-bd0b-4f56-be1e-10b8a22fd3d4
+ref table vw_power_bi_security
+ref table paymentdetailwithallowed
+ref table LocalDateTable_307ac565-8229-4912-86f9-b1690d63299b
+ref table LocalDateTable_c46b9b15-d1da-4f5e-a89e-9ae0e5c629c4
+ref table 'Charges Date Table (CED)'
+ref table LocalDateTable_1611718f-e0e9-4505-bf90-7b948fe18c3f
+ref table LocalDateTable_394c6229-28ad-404b-a615-cc6c3ea20a86
+ref table 'Payers Dim( Payments)'
+ref table 'Services Dim'
+ref table 'Payers Dim (Charges)'
+ref table 'Services Dim (Charges)'
+ref table 'DateDim for Overview'
+ref table Carrier_Dim
+ref table LOC_Dim
+ref table 'reporting vw_AllChargesReport'
+ref table LocalDateTable_cf41d074-c2d6-41c0-8f22-d175314b358e
+ref table LocalDateTable_d12d425f-62e7-46e5-9e29-fc2f0e979cca
+ref table 'Services Dim (Auth)'
+ref table 'Payers Dim (Auth)'
+ref table 'Auth Log'
+ref table LocalDateTable_f014a91b-ed41-4cd5-a453-4c9e45821efd
+ref table LocalDateTable_3694dd83-8363-4527-95e4-aaca43b50f07
+ref table LocalDateTable_c1cf5b5a-f70b-4f97-89c0-297c205aec3f
+ref table LocalDateTable_e5458763-e1ea-40b1-812f-5241ea9abd3b
+ref table 'reporting vw_FacilityMasterWithDisplayName'
+ref table LocalDateTable_2c4b575b-19b5-433c-9d62-9b6f9b68f482
+ref table LocalDateTable_12eef338-68e6-4ed8-9cc7-1a34a2cb3e5a
+ref table 'Charges Date Table (DOS)'
+ref table LocalDateTable_a5e20bb2-73b8-4a85-b286-36c31671ea60
+ref table LocalDateTable_42a74f57-8b2d-4a2a-b709-9559297b07e5
+
+ref role UserAccess
+
+ref cultureInfo en-US
+

@@ -1,0 +1,896 @@
+table 'Imp Measures'
+	lineageTag: e01cdf6b-6bcf-4b01-a489-175905fd6362
+
+	measure 'Payment Collected %' = DIVIDE(SUM('paymentdetailwithallowed'[Payment_Total_Paid]),[Total Charge Amount (Distinct Amount per ID)],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 82dbd690-fa68-495b-be97-267c1dab4b9d
+
+	measure 'Closed AR' = SUM('reporting vw_AllChargesReport'[closed_ar])
+		lineageTag: 77d72e91-c838-4372-86d6-606fdd9dfa98
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Charge Total' = [Open AR]+[Closed AR]
+		lineageTag: 64a6518d-555c-47cd-8ead-9334d8979e02
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure DistinctChargeIDCount = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT( 'reporting vw_AllChargesReport'[charge_id] ),
+			    FILTER(
+			        'reporting vw_AllChargesReport',
+			        NOT ( ISBLANK ( 'reporting vw_AllChargesReport'[charge_id] ) )
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: e1b7c743-1739-4d1a-a663-16be909a71cc
+
+	measure 'Resolved AR %' = DIVIDE([Closed AR],[Charge Total],0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 79f7bebb-bf3d-4b2f-a8e5-6ea454275976
+
+	measure 'Total Charge Amount (Distinct Amount per ID)' =
+			
+			SUMX(
+			    VALUES('paymentdetailwithallowed'[Charge_ID]), // Gives a table of distinct Charge IDs
+			    CALCULATE( MIN(paymentdetailwithallowed[Charge_Amount]) )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 67045c8e-1989-41b5-b426-b0e5d582d6e5
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total no. of Payments' =
+			
+			COUNTROWS(
+			    FILTER(
+			        'paymentdetailwithallowed',
+			        NOT( ISBLANK( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			    )
+			)
+		formatString: 0
+		lineageTag: 89f3a87d-5a0b-42ac-9a82-dd8ba5206912
+
+	measure 'Top 5 Payers wrt payments_new' = ```
+			
+			VAR TopPayers =
+			    TOPN(
+			        5,
+			        SUMMARIZE(
+			            ALLSELECTED('paymentdetailwithallowed'),
+			            'paymentdetailwithallowed'[Payment_Source_w_Payer],
+			            "TotalPaid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			        ),
+			        [TotalPaid], DESC
+			    )
+			VAR Current_ = SELECTEDVALUE( 'paymentdetailwithallowed'[Payment_Source_w_Payer] )
+			RETURN
+			IF(
+			    CONTAINS(
+			        TopPayers,
+			        'paymentdetailwithallowed'[Payment_Source_w_Payer], Current_
+			    ),
+			    Current_,
+			    "Others"
+			)
+			
+			```
+		lineageTag: 7c7c67ea-8cec-4886-8ff7-14d248af4755
+
+	measure 'Show Payer for Payment' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim( Payments)'[PayerGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'paymentdetailwithallowed'[Payment_Source_w_Payer], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 6e89525f-6fc3-4eb9-b417-0461d8d37470
+
+	measure 'Group Total Payments' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim( Payments)'[PayerGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      FILTER(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        NOT 'paymentdetailwithallowed'[Payment_Source_w_Payer]
+			            IN SELECTCOLUMNS( Top5, "Payer", 'paymentdetailwithallowed'[Payment_Source_w_Payer] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      'paymentdetailwithallowed'[Payment_Source_w_Payer] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 7125427a-b481-4692-9f31-27c44191d53d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Payer (by Charge)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'reporting vw_AllChargesReport'[charge_primary_payer_name], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 185801e9-e855-4f0f-a543-214502dc1667
+
+	measure 'Group Total Charge Amount' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			
+			RETURN
+			SWITCH(
+			  TRUE(),
+			
+			  Curr = "Others",
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      FILTER(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        NOT 'reporting vw_AllChargesReport'[charge_primary_payer_name]
+			            IN SELECTCOLUMNS( Top5, "Payer", 'reporting vw_AllChargesReport'[charge_primary_payer_name] )
+			      )
+			    ),
+			
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      'reporting vw_AllChargesReport'[charge_primary_payer_name] = Curr
+			    ),
+			
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: fffe6987-6c7d-4db1-b023-80fb1afada00
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Payments (All)' = ```
+			
+			CALCULATE(
+			  SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			  ALLSELECTED( 'paymentdetailwithallowed' )
+			)
+			
+			```
+		lineageTag: f5315b07-1e2a-410e-9309-d82643078071
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% of Total Payments' = ```
+			
+			DIVIDE(
+			  [Group Total Payments],
+			  [Total Payments (All)],
+			  0
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 080202a0-3673-4f48-8b34-ecea1965d840
+
+	measure '% Share of Total' = ```
+			
+			DIVIDE(
+			  [Group Total Payments],
+			  [Total Payments (All)],
+			  0
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 94bf3b7d-ac38-4b95-91d0-bd6a2bc262c9
+
+	measure 'Group Total Payments for Services' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim'[ServiceGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[LOC] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      FILTER(
+			        VALUES( 'paymentdetailwithallowed'[LOC] ),
+			        NOT 'paymentdetailwithallowed'[LOC]
+			            IN SELECTCOLUMNS( Top5, "Service", 'paymentdetailwithallowed'[LOC] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      'paymentdetailwithallowed'[LOC] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 33493b20-0208-4b2e-bb9c-227de54d8163
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Service for payment' =
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim'[ServiceGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[LOC] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'paymentdetailwithallowed'[LOC], Curr
+			     ),
+			  1,
+			  0
+			)
+		formatString: 0
+		lineageTag: 52254d93-e704-4b2f-941c-9e3ef6c31745
+
+	measure 'Group Total Charges(Payers)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      FILTER(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        NOT 'reporting vw_AllChargesReport'[charge_primary_payer_name]
+			            IN SELECTCOLUMNS( Top5, "Payer", 'reporting vw_AllChargesReport'[charge_primary_payer_name] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      'reporting vw_AllChargesReport'[charge_primary_payer_name] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: ec37e75e-5969-4be0-bbc0-17ade3098ca8
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Payer for Charges' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'reporting vw_AllChargesReport'[charge_primary_payer_name], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: a1e67d39-9d74-4a6e-bb16-c3254318971b
+
+	measure 'Group Total Charges(Services)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim (Charges)'[ServiceGroup])
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[level_of_care] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      FILTER(
+			        VALUES( 'reporting vw_AllChargesReport'[level_of_care] ),
+			        NOT 'reporting vw_AllChargesReport'[level_of_care]
+			            IN SELECTCOLUMNS( Top5, "Payer", 'reporting vw_AllChargesReport'[level_of_care] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      'reporting vw_AllChargesReport'[level_of_care] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 6e4a7869-52c2-4c7c-a7d6-a830a4e29ebb
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Service for Charges' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim (Charges)'[ServiceGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[level_of_care] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'reporting vw_AllChargesReport'[level_of_care], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 2a319fa2-647a-4434-bb3f-bb9739333378
+
+	measure 'Charges Billed Overview' = SUM('reporting vw_AllChargesReport'[charge_id])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 38188f35-09ef-4070-b345-b17e00f4e7ff
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Group Total Charges YT(Payers)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			VAR Top10 =
+			    TOPN(
+			      10,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      FILTER(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name]),
+			        NOT 'reporting vw_AllChargesReport'[charge_primary_payer_name]
+			            IN SELECTCOLUMNS( Top10, "Payer", 'reporting vw_AllChargesReport'[charge_primary_payer_name] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Total Charge Amount_Overview (Distinct Amount per ID)],
+			      'reporting vw_AllChargesReport'[charge_primary_payer_name] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 3f92b985-d067-4c07-81e6-cbda1ad5508f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Payer for Charges YT' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Charges)'[PayerGroup] )
+			VAR Top10 =
+			    TOPN(
+			      10,
+			      ADDCOLUMNS(
+			        VALUES( 'reporting vw_AllChargesReport'[charge_primary_payer_name] ),
+			        "ChargeAmt", CALCULATE( [Total Charge Amount_Overview (Distinct Amount per ID)] )
+			      ),
+			      [ChargeAmt], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top10,
+			       'reporting vw_AllChargesReport'[charge_primary_payer_name], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 5e6ab0c3-58ab-4f87-9747-c2e14ee9c1a7
+
+	measure 'Group Total Payments YT' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim( Payments)'[PayerGroup] )
+			VAR Top10 =
+			    TOPN(
+			      10,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      FILTER(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        NOT 'paymentdetailwithallowed'[Payment_Source_w_Payer]
+			            IN SELECTCOLUMNS( Top10, "Payer", 'paymentdetailwithallowed'[Payment_Source_w_Payer] )
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ),
+			      'paymentdetailwithallowed'[Payment_Source_w_Payer] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 9d8a9b21-c201-4419-9491-0e5171682818
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Show Payer for Payment YT' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim( Payments)'[PayerGroup] )
+			VAR Top10 =
+			    TOPN(
+			      10,
+			      ADDCOLUMNS(
+			        VALUES( 'paymentdetailwithallowed'[Payment_Source_w_Payer] ),
+			        "Paid", CALCULATE( SUM( 'paymentdetailwithallowed'[Payment_Total_Paid] ) )
+			      ),
+			      [Paid], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top10,
+			       'paymentdetailwithallowed'[Payment_Source_w_Payer], Curr
+			     ),
+			  1,
+			  0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 767eb776-d07c-44d4-b80c-e89d0df8e354
+
+	measure 'Total Charge Amount_Overview (Distinct Amount per ID)' =
+			
+			SUMX(
+			    VALUES('reporting vw_AllChargesReport'[charge_id]), // Gives a table of distinct Charge IDs
+			    CALCULATE( MIN('reporting vw_AllChargesReport'[charge_amount]) )
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 9b711cff-7348-4884-881c-e697eefe2f46
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Open AR' = SUM('reporting vw_AllChargesReport'[open_ar])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: ed1225c7-485e-4c20-a6d3-f2f40e29b2e3
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Group Total Auth Days (Services)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim (Auth)'[ServiceGroup])
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'Auth Log'[LOC] ),
+			        "Days", CALCULATE( [Auths Completed Count] )
+			      ),
+			      [Days], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      [Auths Completed Count],
+			      FILTER(
+			        VALUES( 'Auth Log'[LOC] ),
+			        NOT 'Auth Log'[LOC]
+			            IN SELECTCOLUMNS( Top5, "Services", 'Auth Log'[LOC])
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Auths Completed Count],
+			      'Auth Log'[LOC] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		lineageTag: 6fda59de-93c2-44bd-b39e-6c965457a3fa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Auths Completed Count' = ```
+			COUNTAX(FILTER('Auth Log', NOT ISBLANK('Auth Log'[Completed])), 'Auth Log'[Completed])
+			
+			```
+		formatString: 0
+		lineageTag: e49d8f36-0947-407a-b499-1c1e3f265f19
+
+	measure 'Show Service (Auth)' =
+			
+			VAR Curr = SELECTEDVALUE( 'Services Dim (Auth)'[ServiceGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'Auth Log'[LOC] ),
+			        "Days", CALCULATE([Auths Completed Count] )
+			      ),
+			      [Days], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'Auth Log'[LOC], Curr
+			     ),
+			  1,
+			  0
+			)
+		formatString: 0
+		lineageTag: 1b43da33-c5f1-463a-aa80-6368ca0e8391
+
+	measure 'Group Total Auth Days (Payers)' = ```
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Auth)'[PayerGroup])
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'Auth Log'[Carrier] ),
+			        "Days", CALCULATE( [Auths Completed Count] )
+			      ),
+			      [Days], DESC
+			    )
+			RETURN
+			SWITCH(
+			  TRUE(),
+			  Curr = "Others",
+			    CALCULATE(
+			      [Auths Completed Count],
+			      FILTER(
+			        VALUES( 'Auth Log'[Carrier] ),
+			        NOT 'Auth Log'[Carrier]
+			            IN SELECTCOLUMNS( Top5, "Payers", 'Auth Log'[Carrier])
+			      )
+			    ),
+			  Curr <> BLANK(),
+			    CALCULATE(
+			      [Auths Completed Count],
+			      'Auth Log'[Carrier] = Curr
+			    ),
+			  BLANK()
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 1c55c769-34a5-42d6-8581-1ea0f95f9656
+
+	measure 'Show Payers (Auth)' =
+			
+			VAR Curr = SELECTEDVALUE( 'Payers Dim (Auth)'[PayerGroup] )
+			VAR Top5 =
+			    TOPN(
+			      5,
+			      ADDCOLUMNS(
+			        VALUES( 'Auth Log'[Carrier] ),
+			        "Days", CALCULATE([Auths Completed Count] )
+			      ),
+			      [Days], DESC
+			    )
+			RETURN
+			IF(
+			  Curr = "Others"
+			  || CONTAINS(
+			       Top5,
+			       'Auth Log'[Carrier], Curr
+			     ),
+			  1,
+			  0
+			)
+		formatString: 0
+		lineageTag: fb8c9d39-1d53-4ff2-b053-cbad3393d967
+
+	measure 'Dynamic Top5 + Others' = ```
+			
+			VAR CurrGroup =
+			    SELECTEDVALUE( 'Payers Dim( Payments)'[PayerGroup], "" )
+			
+			// 1) build a one-column table of the current slicer-filtered Top 5 payers
+			VAR Top5Table =
+			    TOPN(
+			        5,
+			        SUMMARIZE(
+			            ALLSELECTED( paymentdetailwithallowed ),
+			            paymentdetailwithallowed[Payment_Source_w_Payer],
+			            "@TotalPaid", SUM( paymentdetailwithallowed[Payment_Total_Paid] )
+			        ),
+			        [@TotalPaid], DESC
+			    )
+			VAR Top5List =
+			    SELECTCOLUMNS( Top5Table, "Payer", [Payment_Source_w_Payer] )
+			
+			// 2) switch
+			VAR Result =
+			    SWITCH(
+			        TRUE(),
+			
+			        // “Others” bucket: everybody *not* in the Top 5
+			        CurrGroup = "Others",
+			            CALCULATE(
+			                SUM( paymentdetailwithallowed[Payment_Total_Paid] ),
+			                FILTER(
+			                    ALLSELECTED( paymentdetailwithallowed ),
+			                    NOT paymentdetailwithallowed[Payment_Source_w_Payer] IN Top5List
+			                )
+			            ),
+			
+			        // any of the Top 5
+			        CurrGroup IN Top5List,
+			            CALCULATE(
+			                SUM( paymentdetailwithallowed[Payment_Total_Paid] ),
+			                paymentdetailwithallowed[Payment_Source_w_Payer] = CurrGroup
+			            ),
+			
+			        // everyone else → blank
+			        BLANK()
+			    )
+			
+			RETURN
+			    Result
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: d441f65f-0e6d-4b5a-a5c8-53471f6c563e
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure HasData = ```
+			
+			IF(COUNTROWS('Auth Log') > 0, 1, 0)
+			 
+			```
+		formatString: 0
+		lineageTag: 278b1e96-af6b-4fed-b2bf-d6c9454de96d
+
+	measure UPN = USERPRINCIPALNAME()
+		lineageTag: 651b5c43-07e7-4134-ab51-7f9c0473452c
+
+	measure 'Total Co-ins' = SUM(paymentdetailwithallowed[Co_Ins_Amount])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 95364bcb-db2c-4fa8-beb0-72d5c99c1c16
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Deductibles' = SUM(paymentdetailwithallowed[Deductible_Amount])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: bd23a868-dc2b-4a6c-9f1b-37c8ecbaaca2
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Copay' = SUM(paymentdetailwithallowed[Co_Pay_Amount])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 1792c0a2-a891-4111-8890-739147ae13d7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'HasRows(LOC Slicer)' = ```
+			
+			VAR _LOCs =
+			    VALUES ( LOC_Dim[Level of Care] )          -- list of LOC(s) represented by this slicer row
+			
+			/* ----- Count rows in Fact #1 : paymentdetailwithallowed ------------------- */
+			VAR _PayRows =
+			    CALCULATE (
+			        COUNTROWS ( 'paymentdetailwithallowed' ),
+			        /* Push the LOC filter into the fact table explicitly              */
+			        TREATAS ( _LOCs, 'paymentdetailwithallowed'[LOC] )
+			    )
+			
+			/* ----- Count rows in Fact #2 : vw_AllChargesReport ------------------------ */
+			VAR _ChargeRows =
+			    CALCULATE (
+			        COUNTROWS ( 'reporting vw_AllChargesReport' ),
+			        TREATAS ( _LOCs, 'reporting vw_AllChargesReport'[level_of_care] )
+			    )
+			
+			/* ----- Return 1 if either fact table has data ---------------------------- */
+			RETURN
+			    IF ( _PayRows + _ChargeRows > 0, 1 )
+			
+			
+			```
+		formatString: 0
+		lineageTag: 80e226c5-92d3-420a-bb79-2c29615574ed
+
+	measure 'HasRows(Carrier Slicer)' = ```
+			
+			VAR _CarrierIDs =
+			    VALUES ( Carrier_Dim[Carrier])          -- list of carrier(s) represented by this slicer row
+			
+			/* ----- Count rows in Fact #1 : paymentdetailwithallowed ------------------- */
+			VAR _PayRows =
+			    CALCULATE (
+			        COUNTROWS ( 'paymentdetailwithallowed' ),
+			        /* Push the carrier filter into the fact table explicitly              */
+			        TREATAS ( _CarrierIDs, 'paymentdetailwithallowed'[Payment_Source_w_Payer] )
+			    )
+			
+			/* ----- Count rows in Fact #2 : vw_AllChargesReport ------------------------ */
+			VAR _ChargeRows =
+			    CALCULATE (
+			        COUNTROWS ( 'reporting vw_AllChargesReport' ),
+			        TREATAS ( _CarrierIDs, 'reporting vw_AllChargesReport'[charge_primary_payer_name] )
+			    )
+			
+			/* ----- Return 1 if either fact table has data ---------------------------- */
+			RETURN
+			    IF ( _PayRows + _ChargeRows > 0, 1 )
+			
+			```
+		formatString: 0
+		lineageTag: 028a542a-142d-41d1-a2dd-305889fcb385
+
+	column Column1
+		dataType: string
+		isHidden
+		lineageTag: 9bff7a8c-1d3a-41da-9325-aabaffe0da2a
+		summarizeBy: none
+		sourceColumn: Column1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Imp Measures' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

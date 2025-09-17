@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Nextus Reporting - V1.5"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "eb282907-dcf3-4add-971e-86e1edba38bb"
+  }
+}

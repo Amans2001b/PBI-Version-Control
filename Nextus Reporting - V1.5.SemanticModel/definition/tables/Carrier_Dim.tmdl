@@ -1,0 +1,26 @@
+table Carrier_Dim
+	lineageTag: e4245744-59f1-4080-a7d8-231194d5f6d2
+
+	column Carrier
+		lineageTag: 93e3704d-df32-47fa-ae4b-18febbd6900a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Carrier]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Carrier_Dim = calculated
+		mode: import
+		source = ```
+				
+				DISTINCT(
+				  UNION(
+				    SELECTCOLUMNS( paymentdetailwithallowed, "Carrier", paymentdetailwithallowed[Payment_Source_w_Payer] ),
+				    SELECTCOLUMNS( 'reporting vw_AllChargesReport', "Carrier", 'reporting vw_AllChargesReport'[charge_primary_payer_name] )
+				  )
+				)
+				
+				```
+
+	annotation PBI_Id = 14a49549824d48a0a0d854f27f6d4eb9
+

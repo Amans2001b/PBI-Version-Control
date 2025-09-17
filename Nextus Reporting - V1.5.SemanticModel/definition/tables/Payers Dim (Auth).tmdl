@@ -1,0 +1,29 @@
+table 'Payers Dim (Auth)'
+	lineageTag: d96eded2-33e2-4942-8bed-72c1786716fc
+
+	column PayerGroup
+		lineageTag: af1b644e-3163-4379-9e1a-e471bfbcf411
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PayerGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Payers Dim (Auth)' = calculated
+		mode: import
+		source = ```
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'Auth Log',
+				      "PayerGroup", 'Auth Log'[Carrier]
+				    )
+				  ),
+				  ROW("PayerGroup","Others")
+				)
+				
+				```
+
+	annotation PBI_Id = 91ddd09f2d204953bf25c854692ab48e
+

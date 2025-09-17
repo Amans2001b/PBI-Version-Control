@@ -1,0 +1,42 @@
+table vw_power_bi_security
+	lineageTag: 29636cec-06e5-45d5-8b0a-9fa23f310617
+
+	column user_email
+		dataType: string
+		lineageTag: 24675917-4808-4426-a83b-b6eb2aedcf76
+		summarizeBy: none
+		sourceColumn: user_email
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility_id
+		dataType: string
+		lineageTag: 297c436c-1794-49e7-99e2-dab3f29f28e2
+		summarizeBy: none
+		sourceColumn: facility_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_access
+		dataType: int64
+		formatString: 0
+		lineageTag: b7f9eb19-3e71-4eb0-b84f-d829bad35f5d
+		summarizeBy: sum
+		sourceColumn: has_access
+
+		annotation SummarizationSetBy = Automatic
+
+	partition vw_power_bi_security = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("nextus-reporting.database.windows.net"),
+				    #"cmd-data" = Source{[Name="cmd-data"]}[Data],
+				    dbo_vw_power_bi_security = #"cmd-data"{[Schema="dbo",Item="vw_power_bi_security"]}[Data]
+				in
+				    dbo_vw_power_bi_security
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

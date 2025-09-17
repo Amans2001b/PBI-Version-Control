@@ -1,0 +1,26 @@
+table LOC_Dim
+	lineageTag: 86559d8a-ec4b-42cd-85a0-f4a82ebdabf6
+
+	column 'Level of Care'
+		lineageTag: 307a794b-61f7-47b1-bc57-543eb530364b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Level of Care]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition LOC_Dim = calculated
+		mode: import
+		source = ```
+				
+				DISTINCT(
+				  UNION(
+				    SELECTCOLUMNS( paymentdetailwithallowed, "Level of Care", paymentdetailwithallowed[LOC] ),
+				    SELECTCOLUMNS( 'reporting vw_AllChargesReport', "Level of Care", 'reporting vw_AllChargesReport'[level_of_care] )
+				  )
+				)
+				
+				```
+
+	annotation PBI_Id = abe54f1f01c74718adb1d97f4ed8ba46
+

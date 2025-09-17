@@ -1,0 +1,124 @@
+relationship 6d2df356-9856-4b56-9831-7af97c9251e4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: paymentdetailwithallowed.'Charge From Date'
+	toColumn: LocalDateTable_307ac565-8229-4912-86f9-b1690d63299b.Date
+
+relationship a4e77396-5752-41e0-9be1-b037b62697cb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: paymentdetailwithallowed.Charge_Entered_Date
+	toColumn: LocalDateTable_c46b9b15-d1da-4f5e-a89e-9ae0e5c629c4.Date
+
+relationship 0d066694-0bb0-4ebd-bd1c-95bb49455511
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Charges Date Table (CED)'.Today
+	toColumn: LocalDateTable_1611718f-e0e9-4505-bf90-7b948fe18c3f.Date
+
+relationship 3da2d1ae-bbd1-429c-b0bb-f5e1e404371f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: paymentdetailwithallowed.Payment_Entered
+	toColumn: LocalDateTable_394c6229-28ad-404b-a615-cc6c3ea20a86.Date
+
+relationship 2f3c1e00-17c7-9994-1318-50a44d87d1ad
+	fromColumn: paymentdetailwithallowed.Payment_Received
+	toColumn: 'Payments Date Table'.Date
+
+relationship 1de515c0-f095-4f85-8779-394c187a6316
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'reporting vw_AllChargesReport'.charge_last_payment_received
+	toColumn: LocalDateTable_cf41d074-c2d6-41c0-8f22-d175314b358e.Date
+
+relationship ee754db9-ca92-0bf8-251c-43a17d38ac97
+	fromColumn: paymentdetailwithallowed.Payment_Source_w_Payer
+	toColumn: Carrier_Dim.Carrier
+
+relationship 92b9cb3b-92e4-51f6-b680-08e1c7e4d1f4
+	fromColumn: paymentdetailwithallowed.LOC
+	toColumn: LOC_Dim.'Level of Care'
+
+relationship 029ba412-d7df-4f43-afa3-44d4269d602a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'DateDim for Overview'.Date
+	toColumn: LocalDateTable_d12d425f-62e7-46e5-9e29-fc2f0e979cca.Date
+
+relationship 01d4417c-e488-404d-eaa3-9cbf48c832f0
+	fromColumn: paymentdetailwithallowed.Payment_Received
+	toColumn: 'DateDim for Overview'.Date
+
+relationship 7adb44f3-7aac-e273-b724-882c516bf835
+	fromColumn: 'reporting vw_AllChargesReport'.charge_primary_payer_name
+	toColumn: Carrier_Dim.Carrier
+
+relationship f0bb84a5-8cad-405c-aa78-9ec031fa72c4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Auth Log'.Admit
+	toColumn: LocalDateTable_f014a91b-ed41-4cd5-a453-4c9e45821efd.Date
+
+relationship 8a12232c-b6df-42e7-830b-73bfc53c3a91
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Auth Log'.'Start Date'
+	toColumn: LocalDateTable_3694dd83-8363-4527-95e4-aaca43b50f07.Date
+
+relationship 7edb16ac-dd85-45ba-bd91-4b7bdb8309b6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Auth Log'.'End Date'
+	toColumn: LocalDateTable_c1cf5b5a-f70b-4f97-89c0-297c205aec3f.Date
+
+relationship 3e402dc2-8fd7-41be-a42f-5c4605133ab4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Auth Log'.Completed
+	toColumn: LocalDateTable_e5458763-e1ea-40b1-812f-5241ea9abd3b.Date
+
+relationship a07ffcf4-2529-b7b1-2567-c356f320a7c2
+	fromColumn: 'reporting vw_AllChargesReport'.charge_entered_date
+	toColumn: 'DateDim for Overview'.Date
+
+relationship e8e5029b-7bc7-eda9-b695-b07cd60828a0
+	fromColumn: 'reporting vw_AllChargesReport'.level_of_care
+	toColumn: LOC_Dim.'Level of Care'
+
+relationship 47a58a6d-1c83-0fb4-7937-3d2049d8012e
+	fromColumn: 'Auth Log'.'Facility ID'
+	toColumn: 'reporting vw_FacilityMasterWithDisplayName'.facility_id
+
+relationship 804535d2-f4d4-77a0-017a-a7a1beb4f04c
+	fromColumn: 'reporting vw_AllChargesReport'.customer_id
+	toColumn: 'reporting vw_FacilityMasterWithDisplayName'.facility_id
+
+relationship 9a247096-14a1-7646-445d-5dea803bce13
+	fromColumn: paymentdetailwithallowed.Customer_ID
+	toColumn: 'reporting vw_FacilityMasterWithDisplayName'.facility_id
+
+relationship 7421acd6-184c-d04a-11dc-e3cc89b093d2
+	crossFilteringBehavior: bothDirections
+	securityFilteringBehavior: bothDirections
+	fromColumn: vw_power_bi_security.facility_id
+	toColumn: 'reporting vw_FacilityMasterWithDisplayName'.facility_id
+
+relationship a57af389-7fb8-456b-86f4-8fd8cc203bad
+	joinOnDateBehavior: datePartOnly
+	fromColumn: paymentdetailwithallowed.Patient_DOB
+	toColumn: LocalDateTable_2c4b575b-19b5-433c-9d62-9b6f9b68f482.Date
+
+relationship d8c3cd34-6db6-4b59-874e-fccf3bcc4777
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'reporting vw_AllChargesReport'.patient_dob
+	toColumn: LocalDateTable_12eef338-68e6-4ed8-9cc7-1a34a2cb3e5a.Date
+
+relationship 2cf5e7ec-2c75-441b-8066-0977d40dacd8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Charges Date Table (DOS)'.Date
+	toColumn: LocalDateTable_a5e20bb2-73b8-4a85-b286-36c31671ea60.Date
+
+relationship 767ab1dc-be0f-471c-b812-e8edc1395202
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Charges Date Table (CED)'.Date
+	toColumn: LocalDateTable_42a74f57-8b2d-4a2a-b709-9559297b07e5.Date
+
+relationship a822d893-7b89-1ece-d477-63ee5e700928
+	fromColumn: 'reporting vw_AllChargesReport'.charge_entered_date
+	toColumn: 'Charges Date Table (CED)'.Date
+
+relationship 70d3cfb9-a494-5255-f3b7-29cff498d472
+	fromColumn: 'reporting vw_AllChargesReport'.charge_from_date
+	toColumn: 'Charges Date Table (DOS)'.Date
+

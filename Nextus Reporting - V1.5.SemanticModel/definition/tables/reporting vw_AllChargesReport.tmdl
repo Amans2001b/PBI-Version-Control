@@ -1,0 +1,315 @@
+table 'reporting vw_AllChargesReport'
+	lineageTag: 17d5c8f5-5869-47ee-ae1e-2a748513930c
+
+	column customer_name
+		dataType: string
+		lineageTag: fbe75d29-72b6-4e1f-8066-7ca480f3884e
+		summarizeBy: none
+		sourceColumn: customer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f274fd16-5785-4e17-bb38-96b100da5d76
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column patient_full_name
+		dataType: string
+		lineageTag: 68310396-1017-43fb-b37c-bbf71aaa9b6e
+		summarizeBy: none
+		sourceColumn: patient_full_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_patient_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e8763757-5c8f-4f1c-8e75-33b8b9e0ff39
+		summarizeBy: sum
+		sourceColumn: charge_patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column primary_member_id
+		dataType: string
+		lineageTag: 44862031-3d3c-4374-9809-ed48b2d28142
+		summarizeBy: none
+		sourceColumn: primary_member_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_id
+		dataType: int64
+		formatString: 0
+		lineageTag: cc6936a9-028a-4a88-b1e3-9bf7da97b090
+		summarizeBy: sum
+		sourceColumn: charge_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_claim_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 19fa72b4-bce4-46b0-bcf8-1a2c9a603710
+		summarizeBy: sum
+		sourceColumn: charge_claim_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_from_date
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: 6595320e-2366-4e9a-9c41-bc433b6bc47e
+		summarizeBy: none
+		sourceColumn: charge_from_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column charge_entered_date
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: 88df51e0-0269-4747-8d87-ce5eb8903853
+		summarizeBy: none
+		sourceColumn: charge_entered_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column charge_primary_payer_name
+		dataType: string
+		lineageTag: 6c397f57-3038-4d2f-b933-6b52ecd7dd35
+		summarizeBy: none
+		sourceColumn: charge_primary_payer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column clearinghouse_payer_id
+		dataType: string
+		lineageTag: bf4faedf-2f31-484e-8176-590e43b5bece
+		summarizeBy: none
+		sourceColumn: clearinghouse_payer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_rev_code
+		dataType: string
+		lineageTag: 631d9987-3bdc-4a16-b39c-bcb09e5c1fe4
+		summarizeBy: none
+		sourceColumn: charge_rev_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_cpt_code
+		dataType: string
+		lineageTag: 0bf6f938-342d-43ab-a099-b859f433faa3
+		summarizeBy: none
+		sourceColumn: charge_cpt_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_last_payment_received
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e5e6b1b1-f8f1-4bc8-b16b-b9f4a05d9430
+		summarizeBy: none
+		sourceColumn: charge_last_payment_received
+
+		variation Variation
+			isDefault
+			relationship: 1de515c0-f095-4f85-8779-394c187a6316
+			defaultHierarchy: LocalDateTable_cf41d074-c2d6-41c0-8f22-d175314b358e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column charge_amount
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 04579d20-7114-4175-9554-d05aa7fad92c
+		summarizeBy: sum
+		sourceColumn: charge_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_units
+		dataType: int64
+		formatString: 0
+		lineageTag: 014ab29c-beb2-4465-b1ae-06fef6b5f269
+		summarizeBy: sum
+		sourceColumn: charge_units
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_insurance_payments
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: dc6ea384-6305-4c05-8a48-3631562396c8
+		summarizeBy: sum
+		sourceColumn: charge_insurance_payments
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_patient_payments
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: b6980cac-ab02-47e9-aea3-661ea920a404
+		summarizeBy: sum
+		sourceColumn: charge_patient_payments
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_total_payments
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 52179cdc-cb79-4765-887f-60d843388cbf
+		summarizeBy: sum
+		sourceColumn: charge_total_payments
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column open_ar
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 42dccb7f-b60c-4463-b347-ad118de3ea27
+		summarizeBy: sum
+		sourceColumn: open_ar
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column closed_ar
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: e8afc110-3e60-461e-8073-26e9a3569429
+		summarizeBy: sum
+		sourceColumn: closed_ar
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_balance_due_pat
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: a0ef9d3c-5980-44e2-90ed-2a22a964941e
+		summarizeBy: sum
+		sourceColumn: charge_balance_due_pat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_total_adjustments_wo_transfers
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 018a31cd-9424-4111-ad52-2b991a016d8e
+		summarizeBy: sum
+		sourceColumn: charge_total_adjustments_wo_transfers
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column charge_status
+		dataType: string
+		lineageTag: 536e6497-b981-4974-a0f1-780924189b17
+		summarizeBy: none
+		sourceColumn: charge_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column charge_primary_payer_type
+		dataType: string
+		lineageTag: f7bfef87-9465-45e7-a70b-830e06f264a0
+		summarizeBy: none
+		sourceColumn: charge_primary_payer_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column service_state
+		dataType: string
+		lineageTag: 709e076c-e64c-4ce9-a9a6-314667eae194
+		summarizeBy: none
+		sourceColumn: service_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Merged - Facility, Payer, Patient Name'
+		dataType: string
+		lineageTag: 6685a7e4-b386-44fe-979b-fcb364c106cf
+		summarizeBy: none
+		sourceColumn: Merged - Facility, Payer, Patient Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_of_care
+		dataType: string
+		lineageTag: 3fd548eb-6f02-4041-98bb-980c376c96fc
+		summarizeBy: none
+		sourceColumn: level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column patient_dob
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: 48b511cd-6235-4a68-9190-e93d9b000271
+		summarizeBy: none
+		sourceColumn: patient_dob
+
+		variation Variation
+			isDefault
+			relationship: d8c3cd34-6db6-4b59-874e-fccf3bcc4777
+			defaultHierarchy: LocalDateTable_12eef338-68e6-4ed8-9cc7-1a34a2cb3e5a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column practice_address
+		dataType: string
+		lineageTag: 827c1229-4875-4ddb-b600-060b2cf74beb
+		summarizeBy: none
+		sourceColumn: practice_address
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'reporting vw_AllChargesReport' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("nextus-reporting.database.windows.net"),
+				    #"cmd-data" = Source{[Name="cmd-data"]}[Data],
+				    reporting_vw_AllChargesReport = #"cmd-data"{[Schema="reporting",Item="vw_AllChargesReport"]}[Data],
+				    #"Inserted Merged Column" = Table.AddColumn(reporting_vw_AllChargesReport, "Merged - Facility, Payer, Patient Name", each Text.Combine({[customer_name], [patient_full_name], [charge_primary_payer_name]}, ""), type text)
+				in
+				    #"Inserted Merged Column"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

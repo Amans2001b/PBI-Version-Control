@@ -1,0 +1,62 @@
+table 'Charges Date Table (DOS)'
+	lineageTag: 7d364a71-90b3-4f9b-baf0-4d067f4b0028
+
+	column Date
+		formatString: mm/dd/yyyy
+		lineageTag: 8a5ac137-5a71-4798-9186-56e1e81e47a0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 2cf5e7ec-2c75-441b-8066-0977d40dacd8
+			defaultHierarchy: LocalDateTable_a5e20bb2-73b8-4a85-b286-36c31671ea60.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year = YEAR('Charges Date Table (DOS)'[Date])
+		formatString: 0
+		lineageTag: 6c1cb7cc-7963-47f6-beb6-87c58a79e6e5
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month no.' = MONTH('Charges Date Table (DOS)'[Date])
+		formatString: 0
+		lineageTag: 627fd06f-c75b-4a3a-8bc2-ddb4c6cd228a
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month = FORMAT('Charges Date Table (DOS)'[Date],"mmm")
+		lineageTag: 547e83db-7768-4623-a0d1-7f4a7679af1e
+		summarizeBy: none
+		sortByColumn: 'Month no.'
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearFlag = ```
+			
+			IF(
+			    'Charges Date Table (DOS)'[Year] = YEAR(TODAY()),
+			    "Current Year",
+			    FORMAT('Charges Date Table (DOS)'[Year], "0")
+			)
+			
+			```
+		lineageTag: 84e1c5fa-33b0-4c77-828f-482e40cc6d91
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Charges Date Table (DOS)' = calculated
+		mode: import
+		source = CALENDAR(MIN('reporting vw_AllChargesReport'[charge_from_date]),MAX('reporting vw_AllChargesReport'[charge_from_date]))
+
+	annotation PBI_Id = 2079994bd8df4631afae32fb13ccb193
+

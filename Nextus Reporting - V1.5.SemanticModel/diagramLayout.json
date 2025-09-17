@@ -1,0 +1,250 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 866.66666666666674,
+        "y": 188.33333333333334
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 2392.2857142857147,
+            "y": 778.10714285714289
+          },
+          "nodeIndex": "Imp Measures",
+          "nodeLineageTag": "e01cdf6b-6bcf-4b01-a489-175905fd6362",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 20
+        },
+        {
+          "location": {
+            "x": 1466.7142857142858,
+            "y": 56.25
+          },
+          "nodeIndex": "vw_power_bi_security",
+          "nodeLineageTag": "29636cec-06e5-45d5-8b0a-9fa23f310617",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 21
+        },
+        {
+          "location": {
+            "x": 445.142857142857,
+            "y": 86.25
+          },
+          "nodeIndex": "paymentdetailwithallowed",
+          "nodeLineageTag": "01ec0e36-89da-4d05-aff0-72b55f4204a9",
+          "size": {
+            "height": 299,
+            "width": 298.28571428571433
+          },
+          "zIndex": 22
+        },
+        {
+          "location": {
+            "x": 366.14285714285705,
+            "y": 637.67857142857144
+          },
+          "nodeIndex": "Payments Date Table",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 2396,
+            "y": 479.25
+          },
+          "nodeIndex": "Services Dim",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 390.33333333333331,
+            "y": 945.91666666666663
+          },
+          "nodeIndex": "Payers Dim( Payments)",
+          "nodeLineageTag": "2de65b4c-7101-479b-b679-def8a6677eac",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 906.57142857142844,
+            "y": 561.86904761904736
+          },
+          "nodeIndex": "DateDim for Overview",
+          "nodeLineageTag": "cf076b68-5f52-45ad-8a7e-87202d5575a9",
+          "size": {
+            "height": 147.14285714285711,
+            "width": 301.14285714285711
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 1543.9523809523805,
+            "y": 350.44047619047592
+          },
+          "nodeIndex": "Carrier_Dim",
+          "nodeLineageTag": "e4245744-59f1-4080-a7d8-231194d5f6d2",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 15
+        },
+        {
+          "location": {
+            "x": 660.38095238095275,
+            "y": 734.10714285714278
+          },
+          "nodeIndex": "LOC_Dim",
+          "nodeLineageTag": "86559d8a-ec4b-42cd-85a0-f4a82ebdabf6",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 23
+        },
+        {
+          "location": {
+            "x": 1930.8095238095234,
+            "y": 543.53571428571445
+          },
+          "nodeIndex": "reporting vw_AllChargesReport",
+          "nodeLineageTag": "17d5c8f5-5869-47ee-ae1e-2a748513930c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 16
+        },
+        {
+          "location": {
+            "x": 2964,
+            "y": 479.25
+          },
+          "nodeIndex": "Services Dim (Charges)",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 17
+        },
+        {
+          "location": {
+            "x": 2680,
+            "y": 479.25
+          },
+          "nodeIndex": "Payers Dim (Charges)",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 18
+        },
+        {
+          "location": {
+            "x": 3532,
+            "y": 479.25
+          },
+          "nodeIndex": "Services Dim (Auth)",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 3816,
+            "y": 479.25
+          },
+          "nodeIndex": "Payers Dim (Auth)",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 2098.5714285714284,
+            "y": 126.25
+          },
+          "nodeIndex": "Auth Log",
+          "nodeLineageTag": "1665388d-64a5-4b2b-b1a7-b86e747ae0bc",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 959.999999999999,
+            "y": 56.25
+          },
+          "nodeIndex": "reporting vw_FacilityMasterWithDisplayName",
+          "nodeLineageTag": "2f1bbc2d-6384-4ff5-831f-82a467e46572",
+          "size": {
+            "height": 300,
+            "width": 375.66666666666674
+          },
+          "zIndex": 24
+        },
+        {
+          "location": {
+            "x": 1260.954478586124,
+            "y": 1013.3214285714287
+          },
+          "nodeIndex": "Charges Date Table (DOS)",
+          "nodeLineageTag": "7d364a71-90b3-4f9b-baf0-4d067f4b0028",
+          "size": {
+            "height": 200,
+            "width": 269.71428571428578
+          },
+          "zIndex": 25
+        },
+        {
+          "location": {
+            "x": 1586.2857142857144,
+            "y": 1021.8214285714286
+          },
+          "nodeIndex": "Charges Date Table (CED)",
+          "nodeLineageTag": "ae1ec060-5791-4990-bf63-42fcbd01fd18",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 4
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 60,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

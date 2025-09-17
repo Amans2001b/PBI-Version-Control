@@ -1,0 +1,29 @@
+table 'Payers Dim (Charges)'
+	lineageTag: b51c7f81-cad5-48b1-a933-259b764a9396
+
+	column PayerGroup
+		lineageTag: 5797eb39-3ca1-4e2c-b773-f83c0648d685
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PayerGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Payers Dim (Charges)' = calculated
+		mode: import
+		source = ```
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'reporting vw_AllChargesReport',
+				      "PayerGroup", 'reporting vw_AllChargesReport'[charge_primary_payer_name]
+				    )
+				  ),
+				  ROW("PayerGroup","Others")
+				)
+				
+				```
+
+	annotation PBI_Id = 903d3972256b411aa0d7ddc6de547c15
+

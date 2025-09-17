@@ -1,0 +1,29 @@
+table 'Services Dim (Charges)'
+	lineageTag: d56b49e6-37c9-4b9a-8b80-07499a9bff20
+
+	column ServiceGroup
+		lineageTag: 3d9ddfe6-a82a-4ff1-9973-c723602756ca
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ServiceGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Services Dim (Charges)' = calculated
+		mode: import
+		source = ```
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'reporting vw_AllChargesReport',
+				      "ServiceGroup", 'reporting vw_AllChargesReport'[level_of_care]
+				    )
+				  ),
+				  ROW("ServiceGroup","Others")
+				)
+				
+				```
+
+	annotation PBI_Id = 37b011ff231a4a5da7e8719da396d0d1
+

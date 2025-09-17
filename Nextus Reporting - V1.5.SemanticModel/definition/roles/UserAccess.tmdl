@@ -1,0 +1,7 @@
+role UserAccess
+	modelPermission: read
+
+	tablePermission vw_power_bi_security = 'vw_power_bi_security'[user_email] = USERPRINCIPALNAME() && 'vw_power_bi_security'[has_access] = 1
+
+	annotation PBI_Id = 1b4206564be24a889ae5ab9eb2f59009
+

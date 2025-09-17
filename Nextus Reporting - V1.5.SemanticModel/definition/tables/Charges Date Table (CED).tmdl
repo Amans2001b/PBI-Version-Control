@@ -1,0 +1,85 @@
+table 'Charges Date Table (CED)'
+	lineageTag: ae1ec060-5791-4990-bf63-42fcbd01fd18
+
+	column Date
+		formatString: mm/dd/yyyy
+		lineageTag: c6f432ef-54c1-49fa-9e7e-6459a034cf84
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 767ab1dc-be0f-471c-b812-e8edc1395202
+			defaultHierarchy: LocalDateTable_42a74f57-8b2d-4a2a-b709-9559297b07e5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year = YEAR('Charges Date Table (CED)'[Date])
+		formatString: 0
+		lineageTag: 3775d3e9-5b77-48ca-9fde-e1c6a49b4a74
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month No.' = MONTH('Charges Date Table (CED)'[Date])
+		formatString: 0
+		lineageTag: ade518af-58ab-4f92-9efa-2ebe16031f70
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month = FORMAT('Charges Date Table (CED)'[Date],"mmm")
+		lineageTag: 37250e3c-ff50-4603-92e4-63a521907125
+		summarizeBy: none
+		sortByColumn: 'Month No.'
+
+		annotation SummarizationSetBy = Automatic
+
+	column YTD_Filter =
+			IF(
+			    YEAR('Charges Date Table (CED)'[Date]) = YEAR('Charges Date Table (CED)'[Today]) && 'Charges Date Table (CED)'[Date] <= 'Charges Date Table (CED)'[Today],
+			    1,
+			    0
+			)
+		lineageTag: 07a69fa6-0575-4730-95ef-d3bf70a9c502
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Today = TODAY()
+		formatString: General Date
+		lineageTag: d73b7d57-30f8-48de-a55e-920a426ac912
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 0d066694-0bb0-4ebd-bd1c-95bb49455511
+			defaultHierarchy: LocalDateTable_1611718f-e0e9-4505-bf90-7b948fe18c3f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearFlag = ```
+			
+			IF(
+			    'Charges Date Table (CED)'[Year] = YEAR(TODAY()),
+			    "Current Year",
+			    FORMAT('Charges Date Table (CED)'[Year], "0")
+			)
+			
+			```
+		lineageTag: 2ea02815-4e0b-4a96-a3d8-4ae3e13d3480
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Charges Date Table (CED)' = calculated
+		mode: import
+		source = CALENDAR(MIN('reporting vw_AllChargesReport'[charge_entered_date]),MAX('reporting vw_AllChargesReport'[charge_entered_date]))
+
+	annotation PBI_Id = 608ee21d6d4d4dc9b0d0d612e47d1a21
+

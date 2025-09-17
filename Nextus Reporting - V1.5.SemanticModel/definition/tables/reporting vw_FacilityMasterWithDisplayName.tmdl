@@ -1,0 +1,152 @@
+table 'reporting vw_FacilityMasterWithDisplayName'
+	lineageTag: 2f1bbc2d-6384-4ff5-831f-82a467e46572
+
+	column facility_id
+		dataType: string
+		lineageTag: 08c3f093-133c-44d7-969b-fd4c523942b6
+		summarizeBy: none
+		sourceColumn: facility_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 35edc0e5-b640-4991-91c8-bf0d2fe30fed
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_1
+		dataType: string
+		lineageTag: 356cd9eb-8913-4aaa-bea1-fbd4a4fc540e
+		summarizeBy: none
+		sourceColumn: address_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: 6b8773f4-0ab1-4f3f-bae3-8503a88376df
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: 10430d39-060f-4649-91fe-80cb534d6b31
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column zip_code
+		dataType: string
+		lineageTag: 87b278e7-c3ed-4eaa-8196-fc03301aaf31
+		summarizeBy: none
+		sourceColumn: zip_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column npi
+		dataType: string
+		lineageTag: b6089ce0-6ec6-494f-b2e8-742b8bf164ee
+		summarizeBy: none
+		sourceColumn: npi
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_type
+		dataType: string
+		lineageTag: f6b7eae9-c906-4f0d-94e2-5584e1f4d4a0
+		summarizeBy: none
+		sourceColumn: org_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column practice_name
+		dataType: string
+		lineageTag: 31df5a16-fba7-47e8-a0f9-0e3a4c89a610
+		summarizeBy: none
+		sourceColumn: practice_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 316c61cc-bcfa-4df8-b5f0-89c542bd2bda
+		summarizeBy: none
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column contact_number
+		dataType: string
+		lineageTag: 16010dc1-4fd5-4a76-9acb-0f0cce771278
+		summarizeBy: none
+		sourceColumn: contact_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column email
+		dataType: string
+		lineageTag: 66b1b8f1-8fd2-44de-b551-265eb6041508
+		summarizeBy: none
+		sourceColumn: email
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_email
+		dataType: string
+		lineageTag: da443708-751a-4e4e-8f7b-ac0a7d6ba354
+		summarizeBy: none
+		sourceColumn: user_email
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_role
+		dataType: string
+		lineageTag: c83702d3-572d-4faa-b58c-f61ea2ad34e9
+		summarizeBy: none
+		sourceColumn: user_role
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility_display_name
+		dataType: string
+		lineageTag: e5216d06-9473-42c6-96a5-85a9927a189c
+		summarizeBy: none
+		sourceColumn: facility_display_name
+		sortByColumn: SortOrderFlag
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrderFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: 7161805d-f60c-44dd-b2c2-a44a1a8145e0
+		summarizeBy: sum
+		sourceColumn: SortOrderFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'reporting vw_FacilityMasterWithDisplayName' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("nextus-reporting.database.windows.net"),
+				    #"cmd-data" = Source{[Name="cmd-data"]}[Data],
+				    reporting_vw_FacilityMasterWithDisplayName = #"cmd-data"{[Schema="reporting",Item="vw_FacilityMasterWithDisplayName"]}[Data],
+				    #"Added Custom" = Table.AddColumn(reporting_vw_FacilityMasterWithDisplayName, "SortOrderFlag", each if Text.Contains([facility_display_name], "*C*") then 1 else 0),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"SortOrderFlag", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

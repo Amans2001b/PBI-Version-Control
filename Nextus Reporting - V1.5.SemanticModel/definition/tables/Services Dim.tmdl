@@ -1,0 +1,29 @@
+table 'Services Dim'
+	lineageTag: d0a299ed-5aad-44b6-8699-17d45e2e0d43
+
+	column ServiceGroup
+		lineageTag: 2ce73ec3-d1c0-498f-a958-059227c48e00
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ServiceGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Services Dim' = calculated
+		mode: import
+		source = ```
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'paymentdetailwithallowed',
+				      "ServiceGroup", 'paymentdetailwithallowed'[LOC]
+				    )
+				  ),
+				  ROW("ServiceGroup","Others")
+				)
+				
+				```
+
+	annotation PBI_Id = 826426d8c47b4872ad8fff7e58ca019c
+

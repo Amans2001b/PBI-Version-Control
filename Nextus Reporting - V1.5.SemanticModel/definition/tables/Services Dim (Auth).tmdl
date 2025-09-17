@@ -1,0 +1,27 @@
+table 'Services Dim (Auth)'
+	lineageTag: fd02313d-98e5-431c-bd6f-5d2e8cd9fde5
+
+	column ServiceGroup
+		lineageTag: 02840c79-30c1-4e93-b59a-907a588e6577
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ServiceGroup]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Services Dim (Auth)' = calculated
+		mode: import
+		source =
+				
+				UNION(
+				  DISTINCT(
+				    SELECTCOLUMNS(
+				      'Auth Log',
+				      "ServiceGroup", 'Auth Log'[LOC]
+				    )
+				  ),
+				  ROW("ServiceGroup","Others")
+				)
+
+	annotation PBI_Id = b269558511ef4d288b661d4a82536c6b
+

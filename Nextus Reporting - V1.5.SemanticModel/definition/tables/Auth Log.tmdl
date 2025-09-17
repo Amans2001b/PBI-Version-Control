@@ -1,0 +1,246 @@
+table 'Auth Log'
+	lineageTag: 1665388d-64a5-4b2b-b1a7-b86e747ae0bc
+
+	column Facility
+		dataType: string
+		lineageTag: 85ab96f8-89de-4f36-841f-f1a03f6a6ffb
+		summarizeBy: none
+		sourceColumn: Facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column ACRM
+		dataType: string
+		lineageTag: 49422a68-fca1-43ad-b729-94fe38ba17f3
+		summarizeBy: none
+		sourceColumn: ACRM
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Patient Name'
+		dataType: string
+		lineageTag: 89716ee2-b9c0-4504-b4fa-c69a8ad32e13
+		summarizeBy: none
+		sourceColumn: Patient Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Carrier
+		dataType: string
+		lineageTag: 5c9127a5-0fe9-46f0-bd73-3e8e71b8e6b8
+		summarizeBy: none
+		sourceColumn: Carrier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Admit
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e970af54-8462-4283-960f-0dc0fd39b487
+		summarizeBy: none
+		sourceColumn: Admit
+
+		variation Variation
+			isDefault
+			relationship: f0bb84a5-8cad-405c-aa78-9ec031fa72c4
+			defaultHierarchy: LocalDateTable_f014a91b-ed41-4cd5-a453-4c9e45821efd.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Days Approved'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9779f996-3c30-4f84-8c88-93815e1c2421
+		summarizeBy: sum
+		sourceColumn: Days Approved
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Svc Type'
+		dataType: string
+		lineageTag: 6b53120b-ae8e-4853-97b4-c42e7fd0c3b6
+		summarizeBy: none
+		sourceColumn: Svc Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column LOC
+		dataType: string
+		lineageTag: a42aaeb5-01fc-4ce5-a364-3abce39a7668
+		summarizeBy: none
+		sourceColumn: LOC
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Start Date'
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: 0ac7fd87-0fc4-4fe7-b6b5-ead3d68c3dad
+		summarizeBy: none
+		sourceColumn: Start Date
+
+		variation Variation
+			isDefault
+			relationship: 8a12232c-b6df-42e7-830b-73bfc53c3a91
+			defaultHierarchy: LocalDateTable_3694dd83-8363-4527-95e4-aaca43b50f07.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'End Date'
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: bb51cdc5-a495-4487-877b-0b901f385574
+		summarizeBy: none
+		sourceColumn: End Date
+
+		variation Variation
+			isDefault
+			relationship: 7edb16ac-dd85-45ba-bd91-4b7bdb8309b6
+			defaultHierarchy: LocalDateTable_c1cf5b5a-f70b-4f97-89c0-297c205aec3f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Review Type'
+		dataType: string
+		lineageTag: 664c0eaa-5b70-4dfd-b932-6e9119b6cf0f
+		summarizeBy: none
+		sourceColumn: Review Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Auth #'
+		dataType: string
+		lineageTag: 5fa76de4-6e50-422c-8b0e-053124e76169
+		summarizeBy: none
+		sourceColumn: Auth #
+
+		annotation SummarizationSetBy = Automatic
+
+	column Completed
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: bb91784d-484d-480c-a997-341ed958e944
+		summarizeBy: none
+		sourceColumn: Completed
+
+		variation Variation
+			isDefault
+			relationship: 3e402dc2-8fd7-41be-a42f-5c4605133ab4
+			defaultHierarchy: LocalDateTable_e5458763-e1ea-40b1-812f-5241ea9abd3b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column INT
+		dataType: string
+		lineageTag: 36cdd863-12bb-4011-9db1-56dd002f0971
+		summarizeBy: none
+		sourceColumn: INT
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'EHR Notes'
+		dataType: string
+		lineageTag: 3c543e96-cfd4-4bf8-bf0c-175ca679e383
+		summarizeBy: none
+		sourceColumn: EHR Notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'QA Note'
+		dataType: string
+		lineageTag: a0747be6-7044-46d5-aa1a-04bb6c55886d
+		summarizeBy: none
+		sourceColumn: QA Note
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Merged- Facility, Patient, Carrier'
+		dataType: string
+		lineageTag: 39ee480e-e34e-465b-b1ab-0ff1892e9a67
+		summarizeBy: none
+		sourceColumn: Merged- Facility, Patient, Carrier
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Facility ID'
+		dataType: string
+		lineageTag: 1087399f-bbaf-45fd-aba5-68d5496719c8
+		summarizeBy: none
+		sourceColumn: Facility ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentMonthFlag = ```
+			
+			  IF(
+			    YEAR('Auth Log'[Completed]) = YEAR(TODAY()) &&
+			    MONTH('Auth Log'[Completed]) = MONTH(TODAY()),
+			    "Current Month",
+			    "Other Months"
+			  )
+			```
+		lineageTag: 10cbc4ab-2c85-452f-ae07-7f99d1dd5845
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Auth Log' = m
+		mode: import
+		source =
+				let
+				    // 1) Connect to your SQL server and database
+				    Source = Sql.Databases("nextus-reporting.database.windows.net"),
+				    #"cmd-data" = Source{[Name="cmd-data"]}[Data],
+				    #"reporting_vw_URAuthLog" = #"cmd-data"{[Schema="reporting",Item="vw_URAuthLog"]}[Data],
+				
+				    // 2) Enforce your column types exactly as before
+				    #"Changed Type" = Table.TransformColumnTypes(
+				        #"reporting_vw_URAuthLog",
+				        {
+				            {"Facility",        type text},
+				            {"ACRM",            type text},
+				            {"Patient Name",    type text},
+				            {"Carrier",         type text},
+				            {"Admit",           type date},
+				            {"Days Approved",   Int64.Type},
+				            {"Svc Type",        type text},
+				            {"LOC",             type text},
+				            {"Start Date",      type date},
+				            {"End Date",        type date},
+				            {"Review Type",     type text},
+				            {"Auth #",          type any},
+				            {"Completed",       type date},
+				            {"INT",             type text},
+				            {"EHR Notes",       type text},
+				            {"QA Note",         type any}
+				        }
+				    ),
+				
+				    // 3) Recreate your merged key column
+				    #"Inserted Merged Column" = Table.AddColumn(
+				        #"Changed Type",
+				        "Merged- Facility, Patient, Carrier",
+				        each Text.Combine({[Facility], [Patient Name], [Carrier]}, ""),
+				        type text
+				    )
+				in
+				    #"Inserted Merged Column"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
